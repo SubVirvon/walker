@@ -12,15 +12,15 @@ namespace walker
         {
             char wallIcon = '#';
             char playerIcon = '0';
-            char emptyElement = ' ';
-            char[,] map = mapCreation(wallIcon, playerIcon);
+            char emptyElement = ' '; 
+            char[,] map = CreateMap(wallIcon, playerIcon);
 
             Console.Clear();
             DrawMap(map);
             Walk(map, wallIcon, playerIcon, emptyElement);
         }
 
-        static char[,] mapCreation(char wallIcon, char playerIcon)
+        static char[,] CreateMap(char wallIcon, char playerIcon)
         {
             const string CommandFinish = "finish";
             bool isFinish = false;
@@ -28,7 +28,7 @@ namespace walker
 
             Console.WriteLine($"Нарисуйте карту\nстены - {wallIcon}\nначальная позиция игрока - {playerIcon} (только одна)\nenter - следующий слой карты\n{CommandFinish} - закончить создание карыты");
 
-            while (!isFinish)
+            while (isFinish == false)
             {
                 string input = Console.ReadLine();
 
@@ -78,21 +78,32 @@ namespace walker
 
         static void Walk(char[,] map, char wallIcon, char playerIcon, char emptyElement)
         {
-            const ConsoleKey KeyRight = ConsoleKey.RightArrow;
-            const ConsoleKey KeyLeft = ConsoleKey.LeftArrow;
-            const ConsoleKey KeyUp = ConsoleKey.UpArrow;
-            const ConsoleKey KeyDown = ConsoleKey.DownArrow;
-            int positionX = 0, positionY = 0;
-            int directionX = 0, directionY = 1;
+            int positionX = 0;
+            int positionY = 0;
+            int directionX = 0;
+            int directionY = 0;
             bool isPlaying = true;
 
             Console.CursorVisible = false;
+            FindObject(map, ref positionX, ref positionY, playerIcon);
 
+            while (isPlaying)
+            {
+                if (Console.KeyAvailable)
+                {
+                    Control(ref directionX, ref directionY);
+                    Step(directionX, ref positionX, directionY, ref positionY, map, playerIcon, wallIcon, emptyElement);
+                }
+            }
+        }
+
+        static void FindObject(char[,] map, ref int positionX, ref int positionY, char icon)
+        {
             for (int i = 0; i < map.GetLength(0); i++)
             {
                 for (int j = 0; j < map.GetLength(1); j++)
                 {
-                    if (map[i, j] == playerIcon)
+                    if (map[i, j] == icon)
                     {
                         positionX = i;
                         positionY = j;
@@ -100,43 +111,48 @@ namespace walker
                     }
                 }
             }
+        }
 
-            while (isPlaying)
+        static void Control (ref int directionX, ref int directionY)
+        {
+            const ConsoleKey KeyRight = ConsoleKey.RightArrow;
+            const ConsoleKey KeyLeft = ConsoleKey.LeftArrow;
+            const ConsoleKey KeyUp = ConsoleKey.UpArrow;
+            const ConsoleKey KeyDown = ConsoleKey.DownArrow;
+
+            ConsoleKeyInfo key = Console.ReadKey(true);
+
+            switch (key.Key)
             {
-                if (Console.KeyAvailable)
-                {
-                    ConsoleKeyInfo key = Console.ReadKey(true);
+                case KeyUp:
+                    directionX = -1;
+                    directionY = 0;
+                    break;
+                case KeyDown:
+                    directionX = 1;
+                    directionY = 0;
+                    break;
+                case KeyLeft:
+                    directionX = 0;
+                    directionY = -1;
+                    break;
+                case KeyRight:
+                    directionX = 0;
+                    directionY = 1;
+                    break;
+            }
+        }
 
-                    switch (key.Key)
-                    {
-                        case KeyUp:
-                            directionX = -1;
-                            directionY = 0;
-                            break;
-                        case KeyDown:
-                            directionX = 1;
-                            directionY = 0;
-                            break;
-                        case KeyLeft:
-                            directionX = 0;
-                            directionY = -1;
-                            break;
-                        case KeyRight:
-                            directionX = 0;
-                            directionY = 1;
-                            break;
-                    }
-
-                    if (map[positionX + directionX, positionY + directionY] != wallIcon)
-                    {
-                        Console.SetCursorPosition(positionY, positionX);
-                        Console.Write(emptyElement);
-                        positionX += directionX;
-                        positionY += directionY;
-                        Console.SetCursorPosition(positionY, positionX);
-                        Console.Write(playerIcon);
-                    }
-                }
+        static void Step (int directionX, ref int positionX, int directionY, ref int positionY, char[,] map, char playerIcon, char wallIcon, char emptyElement)
+        {
+            if (map[positionX + directionX, positionY + directionY] != wallIcon)
+            {
+                Console.SetCursorPosition(positionY, positionX);
+                Console.Write(emptyElement);
+                positionX += directionX;
+                positionY += directionY;
+                Console.SetCursorPosition(positionY, positionX);
+                Console.Write(playerIcon);
             }
         }
     }
