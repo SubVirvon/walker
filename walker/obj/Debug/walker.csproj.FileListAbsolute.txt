@@ -1,0 +1,8 @@
+C:\Users\Danii\source\repos\walker\walker\bin\Debug\walker.exe.config
+C:\Users\Danii\source\repos\walker\walker\bin\Debug\walker.exe
+C:\Users\Danii\source\repos\walker\walker\bin\Debug\walker.pdb
+C:\Users\Danii\source\repos\walker\walker\obj\Debug\walker.csproj.AssemblyReference.cache
+C:\Users\Danii\source\repos\walker\walker\obj\Debug\walker.csproj.SuggestedBindingRedirects.cache
+C:\Users\Danii\source\repos\walker\walker\obj\Debug\walker.csproj.CoreCompileInputs.cache
+C:\Users\Danii\source\repos\walker\walker\obj\Debug\walker.exe
+C:\Users\Danii\source\repos\walker\walker\obj\Debug\walker.pdb
