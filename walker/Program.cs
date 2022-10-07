@@ -25,6 +25,7 @@ namespace walker
             const string CommandFinish = "finish";
             bool isFinish = false;
             string[] mapLayers = new string[0];
+            int maxLineLength = int.MinValue;
 
             Console.WriteLine($"Нарисуйте карту\nстены - {wallIcon}\nначальная позиция игрока - {playerIcon} (только одна)\nenter - следующий слой карты\n{CommandFinish} - закончить создание карыты");
 
@@ -34,6 +35,11 @@ namespace walker
 
                 if (input != CommandFinish)
                 {
+                    if (maxLineLength < input.Length)
+                    {
+                        maxLineLength = input.Length;
+                    }
+
                     string[] tempArray = new string[mapLayers.Length + 1];
 
                     for(int i = 0; i < mapLayers.Length; i++)
@@ -50,6 +56,8 @@ namespace walker
                 }
             }
 
+            LayersAlignment(mapLayers, maxLineLength, wallIcon);
+
             char[,] map = new char[mapLayers.Length, mapLayers[0].Length];
 
             for(int i = 0; i < map.GetLength(0); i++)
@@ -59,6 +67,8 @@ namespace walker
                     map[i, j] = mapLayers[i][j];
                 }
             }
+
+            FrameCreation(ref map, wallIcon);
 
             return map;
         }
@@ -91,8 +101,11 @@ namespace walker
             {
                 if (Console.KeyAvailable)
                 {
-                    Control(ref directionX, ref directionY);
-                    Step(directionX, ref positionX, directionY, ref positionY, map, playerIcon, wallIcon, emptyElement);
+                    GetDirections(ref directionX, ref directionY);
+                    if (map[positionX + directionX, positionY + directionY] != wallIcon)
+                    {
+                        Move(directionX, ref positionX, directionY, ref positionY, playerIcon, emptyElement);
+                    }
                 }
             }
         }
@@ -113,7 +126,7 @@ namespace walker
             }
         }
 
-        static void Control (ref int directionX, ref int directionY)
+        static void GetDirections (ref int directionX, ref int directionY)
         {
             const ConsoleKey KeyRight = ConsoleKey.RightArrow;
             const ConsoleKey KeyLeft = ConsoleKey.LeftArrow;
@@ -140,20 +153,56 @@ namespace walker
                     directionX = 0;
                     directionY = 1;
                     break;
+            }       
+        }
+
+        static void Move (int directionX, ref int positionX, int directionY, ref int positionY, char playerIcon, char emptyElement)
+        {
+            
+            Console.SetCursorPosition(positionY, positionX);
+            Console.Write(emptyElement);
+            positionX += directionX;
+            positionY += directionY;
+            Console.SetCursorPosition(positionY, positionX);
+            Console.Write(playerIcon);
+        }
+
+        static void LayersAlignment(string[] layers, int maxLength, char wallIcon)
+        {
+            for (int i = 0; i < layers.Length; i++)
+            {
+                if (layers[i].Length < maxLength)
+                {
+                    int cyclesCount = maxLength - layers[i].Length;
+
+                    for (int j = 0; j < cyclesCount; j++)
+                    {
+                        layers[i] += wallIcon;
+                    }
+                }
             }
         }
 
-        static void Step (int directionX, ref int positionX, int directionY, ref int positionY, char[,] map, char playerIcon, char wallIcon, char emptyElement)
+        static void FrameCreation(ref char[,] map, char wallIcon)
         {
-            if (map[positionX + directionX, positionY + directionY] != wallIcon)
+            char[,] tempArray = new char[map.GetLength(0) + 2, map.GetLength(1) + 2];
+
+            for (int i = 0; i < tempArray.GetLength(0); i++)
             {
-                Console.SetCursorPosition(positionY, positionX);
-                Console.Write(emptyElement);
-                positionX += directionX;
-                positionY += directionY;
-                Console.SetCursorPosition(positionY, positionX);
-                Console.Write(playerIcon);
+                for(int j = 0; j < tempArray.GetLength(1); j++)
+                {
+                    if(i == 0 || i == tempArray.GetLength(0) - 1 || j == 0 || j == tempArray.GetLength(1) - 1)
+                    {
+                        tempArray[i, j] = wallIcon;
+                    }
+                    else
+                    {
+                        tempArray[i, j] = map[i - 1, j - 1];
+                    }
+                }
             }
+
+            map = tempArray;
         }
     }
 }
