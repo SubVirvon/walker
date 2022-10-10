@@ -56,7 +56,7 @@ namespace walker
                 }
             }
 
-            LayersAlignment(mapLayers, maxLineLength, wallIcon);
+            AlignLayers(mapLayers, maxLineLength, wallIcon);
 
             char[,] map = new char[mapLayers.Length, mapLayers[0].Length];
 
@@ -68,7 +68,7 @@ namespace walker
                 }
             }
 
-            FrameCreation(ref map, wallIcon);
+            CreateFrame(ref map, wallIcon);
 
             return map;
         }
@@ -126,7 +126,7 @@ namespace walker
             }
         }
 
-        static void GetDirections (ref int directionX, ref int directionY)
+        static void GetDirections(ref int directionX, ref int directionY)
         {
             const ConsoleKey KeyRight = ConsoleKey.RightArrow;
             const ConsoleKey KeyLeft = ConsoleKey.LeftArrow;
@@ -156,7 +156,7 @@ namespace walker
             }       
         }
 
-        static void Move (int directionX, ref int positionX, int directionY, ref int positionY, char playerIcon, char emptyElement)
+        static void Move(int directionX, ref int positionX, int directionY, ref int positionY, char playerIcon, char emptyElement)
         {
             
             Console.SetCursorPosition(positionY, positionX);
@@ -167,7 +167,7 @@ namespace walker
             Console.Write(playerIcon);
         }
 
-        static void LayersAlignment(string[] layers, int maxLength, char wallIcon)
+        static void AlignLayers (string[] layers, int maxLength, char wallIcon)
         {
             for (int i = 0; i < layers.Length; i++)
             {
@@ -183,7 +183,7 @@ namespace walker
             }
         }
 
-        static void FrameCreation(ref char[,] map, char wallIcon)
+        static void CreateFrame(ref char[,] map, char wallIcon)
         {
             char[,] tempArray = new char[map.GetLength(0) + 2, map.GetLength(1) + 2];
 
